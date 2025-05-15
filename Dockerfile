@@ -1,4 +1,12 @@
 FROM python:3.13-alpine 
+
+RUN apk add --no-cache \
+    zbar \
+    zbar-dev \
+    build-base \
+    jpeg-dev \
+    zlib-dev \
+    libpng-dev
 # Establecer el directorio de trabajo
 WORKDIR /app
 # Copiar requirements.txt e instalar dependencias
