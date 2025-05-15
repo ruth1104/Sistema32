@@ -27,7 +27,7 @@ def add():
         
         return redirect(url_for('wachiman.index'))
 
-    return render_template('wachiman/add.html')
+    return render_template('Wachiman/add.html')
 
 @bp.route('/wachiman/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
