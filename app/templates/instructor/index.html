@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block estilo %}
+<style>
+    .bg-verde-claro {
+        background-color: #6FC24A !important;
+    }
+
+    .btn-verde-claro {
+        background-color: #6FC24A;
+        border-color: #6FC24A;
+        color: white;
+    }
+
+    .btn-verde-claro:hover {
+        background-color: #5ca33f;
+        border-color: #5ca33f;
+    }
+
+    .border-verde-claro {
+        border-color: #6FC24A !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow rounded-4 border-verde-claro">
+        <div class="card-header bg-verde-claro text-white text-center rounded-top-4">
+            <h2 class="mb-0">Lista de Instructores</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-bordered table-hover align-middle text-center">
+                    <thead style="background-color: #E9F9E4;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for instructor in data %}
+                        <tr>
+                            <td>{{ instructor.idInstructor }}</td>
+                            <td>{{ instructor.nameInstructor }}</td>
+                            <td>{{ instructor.documentInstructor }}</td>
+                            <td>
+                                <a href="{{ url_for('intructor.edit', id=instructor.idInstructor) }}" class="btn btn-outline-primary btn-sm me-1">Editar</a>
+                                <a href="{{ url_for('intructor.delete', id=instructor.idInstructor) }}" class="btn btn-outline-danger btn-sm me-1">Eliminar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-end mt-3">
+                <a href="{{ url_for('intructor.add') }}" class="btn btn-verde-claro btn-sm">
+                    Agregar Instructor
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .bg-verde-claro {
+        background-color: #6FC24A !important;
+    }
+
+    .btn-verde-claro {
+        background-color: #6FC24A;
+        border-color: #6FC24A;
+        color: white;
+    }
+
+    .btn-verde-claro:hover {
+        background-color: #5ca33f;
+        border-color: #5ca33f;
+    }
+
+    .border-verde-claro {
+        border-color: #6FC24A !important;
+    }
+
+    .btn-blue {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .btn-blue:hover {
+        background-color: #0b5ed7;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card shadow rounded-4 border-verde-claro">
+        <div class="card-header bg-verde-claro text-white text-center rounded-top-4">
+            <h2 class="mb-0">Lista de Préstamos</h2>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 d-flex justify-content-between">
+                <a href="{{ url_for('roomLoan.add') }}" class="btn btn-verde-claro btn-sm">
+                    <i class="bi bi-plus-circle"></i> Registrar Equipo
+                </a>
+                <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#qrReaderModal">
+                    <i class="bi bi-qr-code-scan"></i> Usar Lector de QR
+                </a>
+                <a href="{{ url_for('roomLoan.generar_pdf_room') }}" target="_blank" class="btn btn-verde-claro">Descargar PDF</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle text-center table-hover" id="roomloan-table">
+                    <thead style="background-color: #E9F9E4;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha de Entrega</th>
+                            <th>Fecha de Devolución</th>
+                            <th>Instructor</th>
+                            <th>Celador</th>
+                            <th>Salón</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for roomLoan in roomLoan %}
+                        <tr>
+                            <td>{{ roomLoan.idRoomLoan }}</td>
+                            <td>{{ roomLoan.date }}</td>
+                            <td>{{ roomLoan.returnDate }}</td>
+                            <td>{{ roomLoan.instructor.nameInstructor }}</td>
+                            <td>{{ roomLoan.user.username }}</td>
+                            <td>{{ roomLoan.room.nameRoom }}</td>
+                            <td>
+                                <div class="d-flex justify-content-between gap-1">
+                                    <a href="{{ url_for('roomLoan.edit', id=roomLoan.idRoomLoan) }}" class="btn btn-outline-primary btn-sm me-1">Editar</a>
+                                    <a href="{{ url_for('roomLoan.delete', id=roomLoan.idRoomLoan) }}" class="btn btn-outline-danger btn-sm me-1">Eliminar</a>
+                                    <a href="{{ url_for('roomLoan.devolver', id=roomLoan.idRoomLoan) }}" class="btn btn-sm btn-success">Devolver</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal para seleccionar instructor después de escanear -->
+    <div class="modal fade" id="instructorModal" tabindex="-1" aria-labelledby="instructorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="instructorForm" method="GET">
+                <div class="modal-content rounded-3">
+                    <div class="modal-header bg-verde-claro text-white">
+                        <h5 class="modal-title" id="instructorModalLabel">Seleccionar Instructor</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="roomId" id="roomIdInput">
+                        <label for="instructorId" class="form-label">Nombre del Instructor:</label>
+                        <input type="text" class="form-control" name="instructorId" placeholder="Nombre del instructor" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Registrar Préstamo</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para lector de QR -->
+    <div class="modal fade" id="qrReaderModal" tabindex="-1" aria-labelledby="qrReaderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-3">
+                <div class="modal-header bg-verde-claro text-white">
+                    <h5 class="modal-title" id="qrReaderModalLabel">Lector de Código QR</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="reader" style="width: 100%;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script del lector QR -->
+<script src="{{ url_for('static', filename='html5-qrcode.min.js') }}"></script>
+<script>
+    let html5QrcodeScanner;
+    let qrYaLeido = false;
+
+    function onScanSuccess(decodedText, decodedResult) {
+        if (qrYaLeido) return; // Evita múltiples ejecuciones
+        qrYaLeido = true;
+
+        try {
+            const jsonObject = JSON.parse(decodedText);
+            const id = jsonObject.ID;
+            document.getElementById('roomIdInput').value = id;
+
+            // Ocultar modal QR y mostrar el de instructor
+            const qrModal = bootstrap.Modal.getInstance(document.getElementById('qrReaderModal'));
+            qrModal.hide();
+
+            const instructorModal = new bootstrap.Modal(document.getElementById('instructorModal'));
+            instructorModal.show();
+        } catch (error) {
+            console.error("Error al parsear el QR:", error);
+            alert(`Error en el QR: ${decodedText}`);
+        }
+    }
+
+    function onScanFailure(error) {
+        console.warn(`Error de escaneo: ${error}`);
+    }
+
+    const qrReaderModal = document.getElementById('qrReaderModal');
+    qrReaderModal.addEventListener('shown.bs.modal', function () {
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    });
+
+    qrReaderModal.addEventListener('hidden.bs.modal', function () {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.clear().then(() => {
+                console.log("Lector de QR detenido.");
+                qrYaLeido = false;
+            }).catch((error) => {
+                console.error("Error al detener el lector de QR:", error);
+            });
+        }
+    });
+</script>
+
+{% endblock %}

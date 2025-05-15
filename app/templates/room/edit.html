@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block estilo %}
+<style>
+    .bg-verde-claro {
+        background-color: #6FC24A !important;
+    }
+
+    .btn-verde-claro {
+        background-color: #6FC24A;
+        border-color: #6FC24A;
+        color: white;
+    }
+
+    .btn-verde-claro:hover {
+        background-color: #5ca33f;
+        border-color: #5ca33f;
+    }
+
+    .border-verde-claro {
+        border-color: #6FC24A !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow rounded-4 border-verde-claro">
+        <div class="card-header bg-verde-claro text-white text-center rounded-top-4">
+          <h2 class="mb-0">Editar Salón</h2>
+        </div>
+        <div class="card-body">
+          <form action="{{ url_for('room.edit', id=room.idRoom) }}" method="post">
+            <div class="mb-3">
+              <label for="nameRoom" class="form-label">Nombre Salón:</label>
+              <input type="text" name="nameRoom" id="nameRoom" value="{{ room.nameRoom }}" 
+                     class="form-control rounded-pill" required>
+            </div>
+            <button type="submit" class="btn btn-verde-claro rounded-pill w-100">Editar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

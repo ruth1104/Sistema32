@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .bg-verde-claro {
+        background-color: #6FC24A !important;
+    }
+
+    .btn-verde-claro {
+        background-color: #6FC24A;
+        border-color: #6FC24A;
+        color: white;
+    }
+
+    .btn-verde-claro:hover {
+        background-color: #5ca33f;
+        border-color: #5ca33f;
+    }
+
+    .border-verde-claro {
+        border-color: #6FC24A !important;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card shadow rounded-4 border-verde-claro">
+        <div class="card-header bg-verde-claro text-white text-center rounded-top-4">
+            <h2 class="mb-0">Lista de Celadores</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle text-center table-hover">
+                    <thead style="background-color: #E9F9E4;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for wachiman in data %}
+                        <tr>
+                            <td>{{ wachiman.idWachiman }}</td>
+                            <td>{{ wachiman.nameWachiman }}</td>
+                            <td>{{ wachiman.documentWachiman }}</td>
+                            <td>
+                                <a href="{{ url_for('wachiman.edit', id=wachiman.idWachiman) }}" class="btn btn-outline-primary btn-sm me-1">Editar</a>
+                                <a href="{{ url_for('wachiman.delete', id=wachiman.idWachiman) }}" class="btn btn-outline-danger btn-sm me-1">Eliminar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-end mt-3">
+                <a href="{{ url_for('wachiman.add') }}" class="btn btn-verde-claro btn-sm">
+                    Agregar Celador
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

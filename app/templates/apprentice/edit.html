@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block estilo %}
+<style>
+    .bg-verde-claro {
+        background-color: #6FC24A !important;
+    }
+
+    .btn-verde-claro {
+        background-color: #6FC24A;
+        border-color: #6FC24A;
+        color: white;
+    }
+
+    .btn-verde-claro:hover {
+        background-color: #5ca33f;
+        border-color: #5ca33f;
+    }
+
+    .border-verde-claro {
+        border-color: #6FC24A !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow rounded-4 border-verde-claro">
+                <div class="card-header bg-verde-claro text-white text-center rounded-top-4">
+                    <h2 class="mb-0">Editar Aprendiz</h2>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('apprentice.edit', id=apprentice.idApprentice) }}" method="post">
+                        <div class="mb-3">
+                            <label for="nameApprentice" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nameApprentice" name="nameApprentice"
+                                   value="{{ apprentice.nameApprentice }}" placeholder="Nombre del aprendiz" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="documentApprentice" class="form-label">Documento:</label>
+                            <input type="text" class="form-control" id="documentApprentice" name="documentApprentice"
+                                   value="{{ apprentice.documentApprentice }}" placeholder="Documento del aprendiz" required>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-verde-claro">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

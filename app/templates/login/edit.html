@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block estilo %}
+<style>
+    .form-container {
+        max-width: 450px;
+        margin: 3rem auto;
+        padding: 2rem;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        background-color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h3 class="text-center mb-4">
+            <i class="bi bi-pencil-square me-2"></i>Editar Usuario
+        </h3>
+        <form action="{{ url_for('auth.edit', id=user.idUser) }}" method="post" autocomplete="off">
+            <div class="mb-3">
+                <label for="username" class="form-label">
+                    <i class="bi bi-person-fill me-1"></i>Usuario
+                </label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">
+                    <i class="bi bi-lock-fill me-1"></i>Contraseña
+                </label>
+                <input type="password" class="form-control" id="password" name="password" value="{{ user.password }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="rol" class="form-label">
+                    <i class="bi bi-clipboard-check-fill me-1"></i>Rol
+                </label>
+                <select class="form-select" id="rol" name="rol" required>
+                    <option value="Aprendiz" {% if user.rol == 'Aprendiz' %}selected{% endif %}>Aprendiz</option>
+                    <option value="Celador" {% if user.rol == 'Celador' %}selected{% endif %}>Celador</option>
+                    <option value="Instructor" {% if user.rol == 'Instructor' %}selected{% endif %}>Instructor</option>
+                </select>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary rounded-pill">
+                    <i class="bi bi-save2-fill me-1"></i>Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

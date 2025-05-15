@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block estilo %}
+<style>
+    .bg-verde-claro {
+        background-color: #6FC24A !important;
+    }
+
+    .btn-verde-claro {
+        background-color: #6FC24A;
+        border-color: #6FC24A;
+        color: white;
+    }
+
+    .btn-verde-claro:hover {
+        background-color: #5ca33f;
+        border-color: #5ca33f;
+    }
+
+    .border-verde-claro {
+        border-color: #6FC24A !important;
+    }
+
+    .card-header {
+        background-color: #6FC24A !important;
+        color: white;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow rounded-4 border-verde-claro">
+        <div class="card-header bg-verde-claro text-white text-center rounded-top-4">
+            <h2 class="mb-0">Lista de Usuarios</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center">
+                    <thead style="background-color: #E9F9E4;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Contraseña</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.idUser }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>
+                                <span id="password-{{ user.idUser }}" class="d-none">{{ user.password }}</span>
+                                <span id="hidden-{{ user.idUser }}">••••••••</span>
+                            </td>
+                            <td>{{ user.rol }}</td>
+                            <td>
+                                <a href="{{ url_for('auth.edit', id=user.idUser) }}" class="btn btn-outline-primary btn-sm me-1">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
+                                <button type="button" class="btn btn-outline-success btn-sm me-1"
+                                        onclick="togglePassword({{ user.idUser }})">
+                                    <i class="bi bi-eye-fill"></i> Ver
+                                </button>
+                                <a href="{{ url_for('auth.delete', id=user.idUser) }}" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash-fill"></i> Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="{{ url_for('auth.add') }}" class="btn btn-verde-claro">
+                    <i class="bi bi-person-plus-fill me-1"></i>Agregar Usuario
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para mostrar/ocultar contraseñas -->
+<script>
+    function togglePassword(id) {
+        const passwordSpan = document.getElementById('password-' + id);
+        const hiddenSpan = document.getElementById('hidden-' + id);
+
+        if (passwordSpan.classList.contains('d-none')) {
+            passwordSpan.classList.remove('d-none');
+            hiddenSpan.classList.add('d-none');
+        } else {
+            passwordSpan.classList.add('d-none');
+            hiddenSpan.classList.remove('d-none');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% block content %}
+{% include 'menu.html' %}
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow rounded-4 border-verde-claro">
+        <div class="card-header bg-verde-claro text-white text-center rounded-top-4">
+          <h2 class="mb-0">Editar Celador</h2>
+        </div>
+        <div class="card-body">
+          <form action="{{ url_for('wachiman.edit', id=wachiman.idWachiman) }}" method="post">
+            <div class="mb-3">
+              <label for="nameWachiman" class="form-label">Nombre:</label>
+              <input type="text" name="nameWachiman" id="nameWachiman" 
+                     value="{{ wachiman.nameWachiman }}" placeholder="Celador" 
+                     class="form-control rounded-pill" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="documentWachiman" class="form-label">Documento:</label>
+              <input type="text" name="documentWachiman" id="documentWachiman" 
+                     value="{{ wachiman.documentWachiman }}" placeholder="Documento" 
+                     class="form-control rounded-pill" required>
+            </div>
+
+            <button type="submit" class="btn btn-verde-claro rounded-pill w-100">Editar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

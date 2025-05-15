@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block estilo %}
+<style>
+    .bg-verde-claro {
+        background-color: #6FC24A !important;
+    }
+
+    .btn-verde-claro {
+        background-color: #6FC24A;
+        border-color: #6FC24A;
+        color: white;
+    }
+
+    .btn-verde-claro:hover {
+        background-color: #5ca33f;
+        border-color: #5ca33f;
+    }
+
+    .border-verde-claro {
+        border-color: #6FC24A !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow rounded-4 border-verde-claro">
+        <div class="card-header bg-verde-claro text-white text-center rounded-top-4">
+            <h2 class="mb-0">Entrada y Salida de Equipos de Aprendices</h2>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 d-flex justify-content-between">
+                <a href="{{ url_for('record.add') }}" class="btn btn-verde-claro btn-sm">
+                    <i class="bi bi-plus-circle"></i> Registrar Equipo
+                </a>
+                <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#qrReaderModal">
+                    <i class="bi bi-qr-code-scan"></i> Usar Lector de QR
+                </a>
+                <a href="{{ url_for('record.generar_pdf_apr') }}" target="_blank" class="btn btn-verde-claro">Descargar PDF</a>
+            </div>
+            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-bordered table-hover text-center align-middle" id="records-table">
+                    <thead style="background-color: #E9F9E4;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha Entrada</th>
+                            <th>Fecha Salida</th>
+                            <th>Aprendiz</th>
+                            <th>Código de equipo</th>
+                            <th>Celador</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in data %}
+                        <tr>
+                            <td>{{ record.idRecords }}</td>
+                            <td>{{ record.dataEntry }}</td>
+                            <td>{{ record.dataExit }}</td>
+                            <td>{{ record.apprentice.nameApprentice }}</td>
+                            <td>{{ record.equipment.codeEquipment }}</td>
+                            <td>{{ record.user.username }}</td>
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    <a href="{{ url_for('record.edit', id=record.idRecords) }}" class="btn btn-outline-primary btn-sm me-1">Editar</a>
+                                    <a href="{{ url_for('record.delete', id=record.idRecords) }}" class="btn btn-outline-danger btn-sm me-1">Eliminar</a>
+                                    <a href="{{ url_for('record.salida', id=record.idRecords) }}" class="btn btn-sm btn-success">Salida</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal QR -->
+<div class="modal fade" id="qrReaderModal" tabindex="-1" aria-labelledby="qrReaderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-3">
+            <div class="modal-header bg-verde-claro text-white">
+                <h5 class="modal-title" id="qrReaderModalLabel">Lector de Código QR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="reader" style="width: 100%;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='html5-qrcode.min.js') }}"></script>
+<script>
+    let html5QrcodeScanner;
+    let qrYaLeido = false;
+
+    function onScanSuccess(decodedText, decodedResult) {
+        if (qrYaLeido) return;
+        qrYaLeido = true;
+
+        try {
+            const jsonObject = JSON.parse(decodedText);
+            const id = jsonObject.ID;
+            window.location.href = `/record/addqr/${id}`;
+        } catch (error) {
+            console.error("Error al parsear el QR:", error);
+            alert(`Error en el QR: ${decodedText}`);
+        }
+    }
+
+    function onScanFailure(error) {
+        console.warn(`Error de escaneo: ${error}`);
+    }
+
+    const qrReaderModal = document.getElementById('qrReaderModal');
+    qrReaderModal.addEventListener('shown.bs.modal', function () {
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    });
+
+    qrReaderModal.addEventListener('hidden.bs.modal', function () {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.clear().then(() => {
+                console.log("Lector de QR detenido.");
+                qrYaLeido = false;
+            }).catch((error) => {
+                console.error("Error al detener el lector de QR:", error);
+            });
+        }
+    });
+</script>
+{% endblock %}
