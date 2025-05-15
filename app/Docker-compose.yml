@@ -2,9 +2,11 @@ services:
   web:
     image: python:3.13-alpine
     build: 
-      context: "https://github.com/ruth1104/ruth.git"
+      context: "https://github.com/ruth1104/Sistema32.git"
       dockerfile: Dockerfile
     volumes:
-      - .:/app
+      - app-data:/app
+volumes:
+  app-data:
 
       
